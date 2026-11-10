@@ -1,61 +1,86 @@
-# SOS Emergency Response — Full-Stack Starter
+# SOS Emergency Response Platform
 
-A starter MERN application covering GitHub issues #295–#304:
+A fresh MERN starter project for managing emergency operations. It includes a React dashboard and an Express/MongoDB API with reusable CRUD support for the currently specified modules.
 
-1. Emergency Communication Channels
-2. Road Blockage Reports
-3. Facility Inspections
-4. Incident Translation
-5. Transportation Requests
-6. Weather Impact Assessments
-7. Operations Shift Scheduling
-8. Incident Communication Transcripts
-9. Resource Request Approvals
-10. Situation Reports
+## Included modules
 
-## Tech stack
-- React + Vite
-- Node.js + Express
-- MongoDB + Mongoose
+- Communication channels
+- Road blockage reports
+- Facility inspections
+- Incident translations
+- Transportation requests
+- Weather impact assessments
+- Operations shift schedules
+- Communication transcripts
+- Resource approval requests
+- Situation reports
+- Public announcements
+- Medical supply inventory
+- Volunteer attendance
+- Infrastructure damage assessments
+- Incident cost estimates
+- Response feedback
+- Dashboard preferences
+
+The project also includes starter authentication endpoints and role-aware middleware. Authentication is a foundation, not a production security certification.
 
 ## Requirements
-- Node.js 18+
-- MongoDB running locally or a MongoDB Atlas connection string
 
-## Run the backend
+- Node.js 18+
+- MongoDB 6+ (local or Atlas)
+
+## Setup
+
+### 1. Backend
+
 ```bash
 cd server
-cp .env.example .env
 npm install
+cp .env.example .env
+```
+
+Set `MONGO_URI` and `JWT_SECRET` in `server/.env`, then run:
+
+```bash
 npm run dev
 ```
 
-Edit `server/.env` and set `MONGO_URI`.
+The API starts at `http://localhost:5000`.
 
-## Run the frontend
-Open a second terminal:
+### 2. Frontend
+
+In a second terminal:
+
 ```bash
 cd client
 npm install
 npm run dev
 ```
 
-The frontend expects the backend at `http://localhost:5000/api`.
+Open the Vite URL, normally `http://localhost:5173`.
 
-## API overview
-Each module has a REST API under `/api/<module>`.
-- `GET /api/<module>` — list records
-- `GET /api/<module>/:id` — get one record
-- `POST /api/<module>` — create a record
-- `PATCH /api/<module>/:id` — update a record
-- `DELETE /api/<module>/:id` — delete a record
+## Demo account
 
-Modules and fields are defined in `server/config/modules.js`.
+Register a user through the UI. The first registered user receives the `admin` role for local development. For a public deployment, replace this behavior with an explicit administrator provisioning process.
 
-## Important security note
-This is a development starter, not a production-ready emergency service. Before real deployment:
-- Add authentication and role-based access control.
-- Validate user identity and incident access on the server.
-- Add rate limiting, audit logs, backups, monitoring, and HTTPS.
-- Do not use this starter to dispatch real emergency services without professional review.
-- Avoid storing sensitive medical or personal data until privacy and security controls are implemented.
+## API
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `GET /api/modules`
+- `GET /api/modules/:module`
+- `POST /api/modules/:module`
+- `GET /api/modules/:module/:id`
+- `PATCH /api/modules/:module/:id`
+- `DELETE /api/modules/:module/:id`
+
+All module endpoints except the health check require a bearer token.
+
+## Important scope note
+
+This ZIP is a fresh implementation of the modules whose specifications are available in the conversation, plus a reusable foundation. It does **not** claim that all 300 historical GitHub issues have been implemented. To implement and verify every one of those issues, their exact descriptions and the original repository are needed.
+
+## Safety and deployment
+
+This is a development starter, not a certified emergency dispatch system. Do not rely on it for real emergency response until it has undergone security review, privacy review, operational testing, load testing, backup/recovery testing, and integration with authorized emergency-service providers. Never expose sensitive incident, medical, or location data publicly.
