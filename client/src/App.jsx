@@ -158,12 +158,15 @@ function App() {
         <section className="panel">
           <div className="panel-title"><div><h2>Add a record</h2><p>Complete the fields and save the information.</p></div></div>
           <form className="form-grid" onSubmit={saveRecord}>
-            {Object.entries(fieldOverrides[active] || {}).map(([field, type]) => {
-              const required = ["name","incidentReference","title","roadName","location","facilityName","facilityType","inspector","inspectionDate","sourceLanguage","targetLanguage","originalText","translatedText","requester","transportType","pickupLocation","destination","passengerCount","condition","impactSummary","responderName","role","shiftStart","shiftEnd","channel","transcriptText","recordedBy","recordedAt","requestTitle","resourceType","quantity","requestedBy","reportingPeriod","summary","preparedBy","message","category","itemName","facility","unit","volunteerName","activity","checkInAt","assetType","assetName","description","expenseCategory","estimatedAmount","rating","userReference","visibleWidgets"].includes(field);
-              return <label key={field} className={type === "textarea" ? "span-two" : ""}><span>{labelize(field)}{required ? " *" : ""}</span>
-                {type.startsWith("select:") ? <select value={form[field] || ""} required={required} onChange={(e) => setForm({ ...form, [field]: e.target.value })}><option value="">Choose…</option>{type.slice(7).split(",").map((option) => <option key={option} value={option}>{labelize(option)}</option>)}</select>
-                  : type === "textarea" ? <textarea rows="3" value={form[field] || ""} required={required} onChange={(e) => setForm({ ...form, [field]: e.target.value })} />
-                  : <input type={type} value={form[field] || ""} required={required} min={type === "number" ? "0" : undefined} onChange={(e) => setForm({ ...form, [field]: e.target.value })} />}
+            {Object.entries(current?.fields || {}).map(([field, rules]) => {
+              const fallback = fieldOverrides[active]?.[field];
+              const type = fallback || (rules.type === "enum" ? `select:${rules.values.join(",")}` : rules.type === "date" ? "date" : rules.type === "number" ? "number" : "text");
+              const required = Boolean(rules.required);
+              const wide = ["textarea", "steps", "comments", "notes", "message", "description", "strengths", "improvementAreas", "validationErrors", "actionItems"].includes(field) || ["steps", "comments", "notes", "message", "description", "strengths", "improvementAreas", "validationErrors", "actionItems"].includes(field);
+              return <label key={field} className={wide ? "span-two" : ""}><span>{labelize(field)}{required ? " *" : ""}</span>
+                {type.startsWith("select:") ? <select value={form[field] ?? rules.default ?? ""} required={required} onChange={(e) => setForm({ ...form, [field]: e.target.value })}><option value="">Choose…</option>{type.slice(7).split(",").map((option) => <option key={option} value={option}>{labelize(option)}</option>)}</select>
+                  : wide ? <textarea rows="3" value={form[field] || ""} required={required} onChange={(e) => setForm({ ...form, [field]: e.target.value })} />
+                  : <input type={type === "datetime-local" ? type : type} value={form[field] ?? rules.default ?? ""} required={required} min={rules.type === "number" ? "0" : undefined} onChange={(e) => setForm({ ...form, [field]: e.target.value })} />}
               </label>;
             })}
             <div className="form-actions span-two"><button className="primary" disabled={busy}>Save record</button><button type="button" className="secondary" onClick={() => setForm({})}>Clear</button></div>

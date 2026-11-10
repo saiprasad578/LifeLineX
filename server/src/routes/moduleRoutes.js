@@ -25,14 +25,39 @@ function validate(moduleName, data) {
   if (moduleName === "shiftSchedules" && Date.parse(data.shiftEnd) <= Date.parse(data.shiftStart)) {
     return "Shift end must be later than shift start.";
   }
-  if (moduleName === "responseFeedback" && (Number(data.rating) < 1 || Number(data.rating) > 5)) {
+  if (["responseFeedback", "responseFeedbackAnalysis"].includes(moduleName) && (Number(data.rating) < 1 || Number(data.rating) > 5)) {
     return "Rating must be between 1 and 5.";
   }
+  if (moduleName === "shelterRegistrations" && Number(data.occupiedCapacity) > Number(data.totalCapacity)) {
+    return "Occupied capacity cannot exceed total capacity.";
+  }
+  if (moduleName === "incidentImportValidations" && Number(data.validRows) + Number(data.rejectedRows) > Number(data.totalRows)) {
+    return "Valid and rejected rows cannot exceed total rows.";
+  }
+  if (moduleName === "incidentRelationships" && data.sourceIncident === data.relatedIncident) {
+    return "An incident cannot be related to itself.";
+  }
+  if (moduleName === "volunteerAttendanceRecords" && data.checkOutAt && Date.parse(data.checkOutAt) < Date.parse(data.checkInAt)) {
+    return "Check-out time cannot be earlier than check-in time.";
+  }
+  if (moduleName === "equipmentCheckouts" && data.expectedReturnAt && Date.parse(data.expectedReturnAt) < Date.parse(data.checkedOutAt)) {
+    return "Expected return time cannot be earlier than checkout time.";
+  }
+  if (moduleName === "notificationQuietHours" && !/^([01]\d|2[0-3]):[0-5]\d$/.test(data.startTime || "")) {
+    return "Start time must use HH:mm format.";
+  }
+  if (moduleName === "notificationQuietHours" && !/^([01]\d|2[0-3]):[0-5]\d$/.test(data.endTime || "")) {
+    return "End time must use HH:mm format.";
+  }
+  if (moduleName === "medicalSupplyInventory" && Number(data.minimumQuantity) > Number(data.availableQuantity)) {
+    // Low stock is allowed; this is a warning state, not a validation failure.
+  }
+
   return null;
 }
 
 router.get("/", (_req, res) => {
-  res.json(Object.entries(definitions).map(([key, value]) => ({ key, label: value.label })));
+  res.json(Object.entries(definitions).map(([key, value]) => ({ key, label: value.label, fields: value.fields })));
 });
 
 router.get("/:module", async (req, res) => {

@@ -84,3 +84,7 @@ This ZIP is a fresh implementation of the modules whose specifications are avail
 ## Safety and deployment
 
 This is a development starter, not a certified emergency dispatch system. Do not rely on it for real emergency response until it has undergone security review, privacy review, operational testing, load testing, backup/recovery testing, and integration with authorized emergency-service providers. Never expose sensitive incident, medical, or location data publicly.
+
+## Latest implementation update
+
+Added schema-driven modules for LifeLineX issues **#212–#236**. See [docs/ISSUES_212_236.md](docs/ISSUES_212_236.md) for the issue-to-module mapping and integration limitations.
